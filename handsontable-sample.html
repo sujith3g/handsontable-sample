@@ -1,11 +1,18 @@
+<template name="layout">
 <head>
   <title>handsontable-sample</title>
 </head>
 
 <body>
-  {{> handsontable}}
+		{{> handsontable}}
+		<!--	{{> h_table}} -->
 </body>
-
+</template>
 <template name="handsontable">
-<div class="handsontable" id="hot"></div>
+		<div class="handsontable" id="hot"></div>
+		<!-- {{#if Template.subscriptionsReady}} -->
+		<!-- <p>Subs ready.....!</p> -->
+		<!-- {{else}} -->
+		<!--	<p>loading...</p>-->
+		<!--	{{/if}} -->
 </template>

@@ -1,19 +1,36 @@
 if (Meteor.isClient) {
+	Template.handsontable.onCreated(function (){
+		var self = this;
+	//	console.log(self);
+		self.autorun(function(){
+		//	if(self.data && self.data.rows){
+				//console.log(Session.get('rows'));
+				self.subscribe("h_data",Session.get('rows'));
+		//	}else{
+			//	self.subscribe("h_data");
+		//	}
+		});
+	});
   Template.handsontable.rendered = function () {
+	//	console.log(Template.instance().subscriptionsReady());	
+		var self = this;
    var myData = [];  // Need this to create instance
-   var myTable = $("#hot");
-   myTable.handsontable({  // Create Handsontable instance
-     data: myData,
-     colHeaders: ["input","Crawling status","CC",
-	    	"Patent/Pub Number","KC"],
-      colWidths:[100,150,50,120,50],
+	 var $$ = function(id) {
+		 return document.getElementById(id);
+	 };
+   var myTable = $('#hot');
+   myTable.handsontable({
+    data: myData,
+    colHeaders: ["Sl No","First Name","Last Name",
+	    	"Data Column 1","Data Column 2"],
+    colWidths:[100,150,150,120,150],
       columns: [
-		    {data: "input"},{data: "crawlStatus"},{data: "cc"},
-		    {data: "number"},{data: "kc"}
+		    {data: "sl_no"},{data: "first_name"},{data: "last_name"},
+		    {data: "col_1"},{data: "col_2"}
 	  	],
      startRows: 5,
      startCols: 5,
-    //  colHeaders: true,
+      colHeaders: true,
      rowHeaders: true,
      minSpareRows: 80,
      contextMenu: true,
@@ -34,25 +51,32 @@ if (Meteor.isClient) {
               row.rowIndex = rowNum;
                MyCollection.insert(row);
              }
-
+//
          }
        }
      }
    });
 
-   Tracker.autorun( function () {  // Tracker function for reactivity
-       myData = MyCollection.find().fetch();  // Tie in our data
-       var hot = myTable.handsontable('getInstance');
+		self.autorun(function(){  // Tracker function for reactivity
+			console.log("subs ready",myTable);
+       myData = MyCollection.find({}, {sort: {rowIndex: 1}}).fetch();  // Tie in our data
+			 var hot = myTable.handsontable('getInstance');
+			// console.log("h_instance",hot);
        hot.loadData(myData);
-   });
+		});
   };
+	//Template.handsontable.helpers({
+	//	'table_data' : function (){
+  //     return MyCollection.find({}, {sort: {rowIndex: 1}}).fetch();  // Tie in our data
+	//	}
+	//});
 }
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
     if(MyCollection.find().count()==0){
-
+			
     }
   });
 }
