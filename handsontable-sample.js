@@ -1,23 +1,14 @@
 if (Meteor.isClient) {
 	Template.handsontable.onCreated(function (){
 		var self = this;
-	//	console.log(self);
 		self.autorun(function(){
-		//	if(self.data && self.data.rows){
-				//console.log(Session.get('rows'));
-				self.subscribe("h_data",Session.get('rows'));
-		//	}else{
-			//	self.subscribe("h_data");
-		//	}
+				self.subscribe("h_data",Session.get('rows'));//since Session is a reactive variable any change in its value, trigger subscription.
 		});
 	});
   Template.handsontable.rendered = function () {
 	//	console.log(Template.instance().subscriptionsReady());	
 		var self = this;
    var myData = [];  // Need this to create instance
-	 var $$ = function(id) {
-		 return document.getElementById(id);
-	 };
    var myTable = $('#hot');
    myTable.handsontable({
     data: myData,
@@ -30,7 +21,7 @@ if (Meteor.isClient) {
 	  	],
      startRows: 5,
      startCols: 5,
-      colHeaders: true,
+     // colHeaders: true,
      rowHeaders: true,
      minSpareRows: 80,
      contextMenu: true,
@@ -58,18 +49,12 @@ if (Meteor.isClient) {
    });
 
 		self.autorun(function(){  // Tracker function for reactivity
-			console.log("subs ready",myTable);
+			//console.log("subs ready",myTable);
        myData = MyCollection.find({}, {sort: {rowIndex: 1}}).fetch();  // Tie in our data
 			 var hot = myTable.handsontable('getInstance');
-			// console.log("h_instance",hot);
        hot.loadData(myData);
 		});
   };
-	//Template.handsontable.helpers({
-	//	'table_data' : function (){
-  //     return MyCollection.find({}, {sort: {rowIndex: 1}}).fetch();  // Tie in our data
-	//	}
-	//});
 }
 
 if (Meteor.isServer) {
